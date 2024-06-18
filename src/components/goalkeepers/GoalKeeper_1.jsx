@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useCharacterAnimation } from "@/contexts/CharacterAnimation";
 import * as THREE from "three";
-import { goal_keeper_positions } from "@/helpers/goalKeeperPositions.js";
+import { goal_keeper_positions } from "@/utils/goalKeeperPositions.js";
 
 export function Goalkeeper_1(props) {
   const { action, type, onActiveAnimation } = props;
@@ -18,52 +18,43 @@ export function Goalkeeper_1(props) {
   const { actions, names } = useAnimations(animations, group);
   const { animationIndex } = useCharacterAnimation();
 
-  const [lastPosition, setLastPosition] = useState(new THREE.Vector3());
-
-  // useEffect(() => {
-  //   if (group.current) {
-  //     group.current.action.copy(lastPosition);
-  //   }
-  // }, [lastPosition]);
-
-  const handleStart = () => {
-    console.log("start keeper");
+  const startMovement = () => {
     const animation = actions[
       goal_keeper_positions[type].idle.animation
     ].setLoop(THREE.LoopRepeat);
-    console.log(animation);
     animation.reset();
     animation.play();
   };
 
+  const stopMovement = (name) => {
+    const animation = actions[goal_keeper_positions[type][name].animation];
+    animation.stop();
+  };
+
   const handleKeep = () => {
-    console.log("start to keeep", action, actions);
-    const action = actions[action];
-    action.reset();
-    action.play();
-    // action.clampWhenFinished = true;
-    // action.onFinished = () => {
-    //   if (group.current) {
-    //     const finalPosition = group.current.action.clone();
-    //     setLastPosition(finalPosition);
-    //   }
-    // };
+    const animation = actions[
+      goal_keeper_positions[type][action].animation
+    ].setLoop(THREE.LoopOnce);
+    animation.reset();
+    animation.play();
+    animation.clampWhenFinished = true;
+    animation.getMixer().addEventListener("finished", () => {
+      stopMovement(action);
+      startMovement();
+    });
   };
 
   useEffect(() => {
     if (Object.keys(actions).length > 0) {
       switch (animationIndex) {
         case 0:
-          handleStart();
+          startMovement();
+          break;
         case 1:
           setTimeout(() => {
+            stopMovement("idle");
             handleKeep();
-          }, 500);
-          // setTimeout(() => {
-          //   const action = actions[names[1]];
-          //   action.reset();
-          //   action.play();
-          // }, 2300);
+          }, 200);
           break;
         default:
           // onActiveAnimation({ time: actions[names[0]].getClip().duration });
@@ -72,13 +63,7 @@ export function Goalkeeper_1(props) {
     }
   }, [animationIndex]);
 
-  document.getElementById("restart").addEventListener("click", () => {
-    const index = positions[action].animation;
-    const action = actions[names[index]];
-    const action2 = actions[names[1]];
-    action2.stop();
-    action.stop();
-  });
+  document.getElementById("restart").addEventListener("click", () => {});
 
   return (
     <group ref={group} {...props} dispose={null}>

@@ -9,25 +9,34 @@ import { useCharacterAnimation } from "@/contexts/CharacterAnimation";
 
 export const positions = {
   penalty: {
-    position: [0, 0, 9.5],
+    position: [0.1, 0, 9],
   },
 };
 
-export const trayectories = {
-  left_down: [-3, 0.3, 0],
-  right_down: [6, 10, 10],
-  center: [0, 0.3, 0],
-};
 export const trayectories_force = {
-  left_down: [-70, 0, -300],
-  right_down: [70, 70, -200],
-  center: [0, 50, -300],
+  penalty: {
+    left: {
+      1: [-70, 0, -300],
+      2: [-48, 60, -150],
+      3: [-70, 70, -300],
+    },
+    right: {
+      1: [70, 0, -300],
+      2: [48, 60, -150],
+      3: [70, 70, -300],
+    },
+    center: {
+      1: [0, 0, -300],
+      2: [-5, 70, -300],
+      3: [5, 90, -300],
+    },
+  },
 };
 
 export function Ball(props) {
-  const { position, animationTime, trayectory, force } = props;
-  const [state, setState] = useState(positions[position]);
+  const { position, animationTime, direction, force } = props;
   const { animationIndex } = useCharacterAnimation();
+
   const { sphereCollaider, sphereCollaiderAPI } = useSphereCollaider({
     scale: [0.15, 0.15, 0.15],
     args: [0.15],
@@ -35,13 +44,15 @@ export function Ball(props) {
     rotation: [0, 0, 0],
     mass: 0.2,
     type: "Dynamic",
-    onCollide: (e) => console.log("collided"),
+    material: {
+      friction: 0.5,
+      restitution: 0.1,
+    },
+    name: "ball",
+    onCollide: (e) => {
+      // console.log("ball collided", e.body);
+    },
   });
-
-  // useLayoutEffect(() => {
-  //   sphereCollaiderAPI.applyImpulse([0, 0, 90], [0, 0, 0]);
-  // }, [animationIndex]);
-  // deajar las ultimas 100 milesimas de segundo para que se ejecute la animacion
 
   document.getElementById("restart").addEventListener("click", () => {
     // restart ball position
@@ -53,23 +64,24 @@ export function Ball(props) {
       positions[position].position[2]
     );
   });
+
+  const shoot = () => {
+    const force_ = trayectories_force[position][direction][force];
+    sphereCollaiderAPI.applyForce(force_, [0, 0, 0]);
+  };
+
   useEffect(() => {
     switch (animationIndex) {
       case 1:
         setTimeout(() => {
-          sphereCollaiderAPI.applyForce(
-            trayectories_force[trayectory.replace(/ /g, "_")],
-            [0, 0, 0]
-          );
+          shoot();
         }, animationTime * 1000 - 700);
         break;
       default:
         break;
     }
   }, [animationIndex]);
-  useEffect(() => {
-    setState(positions[position]);
-  }, []);
+
   return (
     <group dispose={null}>
       <mesh ref={sphereCollaider}>

@@ -19,7 +19,6 @@ const LoginPage = (props) => {
 
   const createUser = useMutation(createAccount, {
     onSuccess: (res) => {
-      console.log("...redirecting to /game");
       alert(`user created with code: ${res.code}`);
       router.push("/game");
       redirect("/game");

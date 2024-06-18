@@ -22,14 +22,16 @@ import { Stadium } from "@/components/stadium/Stadium";
 import { Goalkeeper_1 } from "@/components/goalkeepers/GoalKeeper_1";
 
 const Game = (props) => {
-  const [kickerPosition, setKickerPosition] = useState("penalty");
-  const [ballPosition, setBallPosition] = useState("penalty");
   const [shootType, setShootType] = useState("penalty");
-  const [keeperAction, setKeeperAction] = useState("idle");
-  const [keeperZone, setKeeperZone] = useState("left");
-  const [kickAnimation, setKickAnimation] = useState({ time: 0 });
-  const [trayectory, setTrayectory] = useState("left down");
-  const [force, setForce] = useState("left");
+  const [kickerAnimation, setKickerAnimation] = useState("rigth_down");
+  const [currentKickerAnimation, setCurrentKickerAnimation] = useState({
+    time: 0,
+  });
+  const [keeperAction, setKeeperAction] = useState("right_down");
+  const [direction, setDirection] = useState("left");
+  const [force, setForce] = useState(1);
+
+  const [goals, setGoals] = useState(0);
 
   return (
     <div className={styles.container}>
@@ -49,20 +51,22 @@ const Game = (props) => {
               {/* 
                 <Goalkeeper position={keeperAction} /> */}
               <Kicker_1
-                position={kickerPosition}
-                onActiveAnimation={setKickAnimation}
+                position={shootType}
+                animation={kickerAnimation}
+                onActiveAnimation={setCurrentKickerAnimation}
               />
               <Ball
-                position={ballPosition}
-                animationTime={kickAnimation.time}
-                trayectory={trayectory}
+                position={shootType}
+                animationTime={currentKickerAnimation.time}
+                direction={direction}
                 force={force}
               />
               <Goalkeeper_1 action={keeperAction} type={shootType} />
               <Goal
-                rotation={[0, Math.PI / 2, 0]}
                 scale={[2, 0.6, 0.6]}
-                keeperZone={keeperZone}
+                shootType={shootType}
+                keepPosition={keeperAction}
+                setGoals={setGoals}
               />
               <Stadium position={[-0.5, -2.43, 48.5]} />
               <BoxCollaider
@@ -71,6 +75,7 @@ const Game = (props) => {
                 rotation={[0, 0, 0]}
                 mass={1}
                 type="Static"
+                name="ground"
                 // onCollide={(e) => console.log("collided")}
               >
                 <mesh>
@@ -83,10 +88,11 @@ const Game = (props) => {
           </Suspense>
         </Canvas>
         <Interface
-          setBallPosition={setBallPosition}
-          setTrayectory={setTrayectory}
+          setBallPosition={setShootType}
+          setDirection={setDirection}
           setForce={setForce}
           setKeeperAction={setKeeperAction}
+          goals={goals}
         />
       </CharacterAnimationProvider>
     </div>
