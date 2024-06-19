@@ -1,0 +1,101 @@
+/**STYLE GLOBALES**/
+:root {
+	--gradientBluePurple: linear-gradient(90deg, rgba(0,255,218,1) 0%, rgba(191,101,239,1) 100%);
+}
+
+* {
+	background-color: #45457C;
+	margin: 0;
+	padding: 0;
+	color: #fff;
+	font-family: "Poppins", sans-serif;
+}
+
+img {
+	width: 100%;
+}
+
+.content {
+	display: flex;
+	justify-content: center;
+	align-content: center;
+	align-items: center;
+	width: 100vw;
+	height: 100vh;
+}
+
+.content .item {
+	display: flex;
+	justify-content: center;
+	align-content: center;
+	align-items: center;
+	width: 33%;
+	height: 100vh;
+}
+/**STYLE GLOBALES**/
+
+/**STYLE HOME**/
+.content .item.logoMiami {
+	align-content: flex-start;
+	align-items: flex-start;
+	justify-content: flex-start;
+}
+
+.content .item.logoMiami img {
+	width: 20%;
+	margin: 30px;
+}
+
+.content .item.logoAR {
+	flex-direction: column;
+}
+
+.content .item.logoAR .progress-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 25px;
+    overflow: hidden;
+    margin-top: 80px;
+}
+
+.content .item.logoAR .progress-bar {
+    height: 4px;
+    width: 0;
+    background: var(--gradientBluePurple);
+    border-radius: 25px;
+    transition: width 0.5s ease-in-out;
+}
+/**STYLE HOME**/
+
+/**STYLE WELCOME**/
+
+.content .item.contentWelcome {
+	width: 70%;
+	flex-direction: column;
+	color: #fff;
+	font-size: 18pt;
+	text-align: center;
+}
+
+.content .item.contentWelcome p {
+	margin-bottom: 20px;
+}
+
+.content .item.contentWelcome p:last-child {
+	margin-bottom: 60px;
+}
+
+.content .item.contentWelcome a {
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.content .item.contentWelcome .btn {
+	width: 200px;
+	height: 47px;
+	border: none;
+	background: var(--gradientBluePurple);
+	font-weight: 600;
+	font-size: 15pt;
+	border-radius: 10px;
+}
